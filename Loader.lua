@@ -36,6 +36,8 @@ NyxModsUniversal.Window = Library:CreateWindow({
   DragImage = 86507528059862
 })
 
+task.wait(10)
+
 for _,v in ipairs(NyxModsUniversal.TabsOrder) do
   local Executed, Error = pcall(function()
     local Url = NyxModsUniversal.TabsUrl[v]
