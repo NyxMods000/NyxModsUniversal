@@ -276,7 +276,7 @@ local function Bang()
         local HumanoidRootPart = GetHumanoidRootPart(Client)
         if TargetHumanoidRootPart and HumanoidRootPart then
           HumanoidRootPart.CFrame = TargetHumanoidRootPart.CFrame * CFrame.new(0,0,i)
-          HumanoidRootPart.CFrame = HumanoidRootPart.CFrame * CFrame.Angles(0,math.rad(180),0)
+          HumanoidRootPart.CFrame = HumanoidRootPart.CFrame * CFrame.Angles(0,math.rad(0),0)
           if not ItsPlayingAnimation(Client,Config.Bang.BangAnimation.Id) then
             PlayAnimation(Config.Bang.BangAnimation.Id,Config.Bang.BangAnimation.Pause,Config.Bang.BangAnimation.TimePosition,Config.Bang.BangAnimation.Speed,Config.Bang.BangAnimation.Looped)
           end
