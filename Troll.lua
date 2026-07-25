@@ -70,7 +70,7 @@ local Config = {
 }
 
 --//Functions
-function GetPlayerByPartialName(Text)
+local function GetPlayerByPartialName(Text)
   local Name = Text and Text:lower()
   for i,v in ipairs(Players:GetPlayers()) do
     if v.Name:lower():sub(1,#Name) == Name or v.DisplayName:lower():sub(1,#Name) == Name then
@@ -79,7 +79,7 @@ function GetPlayerByPartialName(Text)
   end
 end
 
-function GetHumanoidRootPart(Player)
+local function GetHumanoidRootPart(Player)
   local Character = Player.Character
   if Character then
     local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
@@ -89,7 +89,7 @@ function GetHumanoidRootPart(Player)
   end
 end
 
-function GetHumanoid(Player)
+local function GetHumanoid(Player)
   local Character = Player.Character
   if Character then
     local Humanoid = Character:FindFirstChild("Humanoid")
@@ -99,7 +99,7 @@ function GetHumanoid(Player)
   end
 end
 
-function ItsPlayingAnimation(Player,Id)
+local function ItsPlayingAnimation(Player,Id)
   local Humanoid = GetHumanoid(Player)
   if Humanoid then
     for _,Track in ipairs(Humanoid:GetPlayingAnimationTracks()) do
@@ -115,7 +115,7 @@ function ItsPlayingAnimation(Player,Id)
   return nil
 end
 
-function PlayAnimation(Id,Pause,Time,Speed,Looped)
+local function PlayAnimation(Id,Pause,Time,Speed,Looped)
   local Humanoid = GetHumanoid(Client)
   if Humanoid then
     local Animator = Humanoid:FindFirstChild("Animator")
@@ -157,7 +157,7 @@ function PlayAnimation(Id,Pause,Time,Speed,Looped)
   end
 end
 
-function StopAnimation(Id)
+local function StopAnimation(Id)
   local Humanoid = GetHumanoid(Client)
   if Humanoid then
     for _,Track in ipairs(Humanoid:GetPlayingAnimationTracks()) do
@@ -173,7 +173,7 @@ function StopAnimation(Id)
   return nil
 end
 
-function TeleportToPlayer(Player)
+local function TeleportToPlayer(Player)
   local TargetHumanoidRootPart = GetHumanoidRootPart(Player)
   local HumanoidRootPart = GetHumanoidRootPart(Client)
   if TargetHumanoidRootPart and HumanoidRootPart then
@@ -181,7 +181,7 @@ function TeleportToPlayer(Player)
   end
 end
 
-function FlingPlayer(Target)
+local function FlingPlayer(Target)
   if Config.Fling.FlingInProgress then
     Config.Fling.StopFling = true
     task.wait(0.1)
@@ -237,7 +237,7 @@ function FlingPlayer(Target)
   end)
 end
 
-function SpectatePlayer(Player)
+local function SpectatePlayer(Player)
   local Camera = Workspace.CurrentCamera
   local Humanoid = GetHumanoid(Player)
   if Humanoid then
@@ -245,7 +245,7 @@ function SpectatePlayer(Player)
   end
 end
 
-function Bang()
+local function Bang()
   task.spawn(function()
     local i = 1
     local Direction = 1
@@ -292,7 +292,7 @@ function Bang()
   end)
 end
 
-function FaceBang()
+local function FaceBang()
   task.spawn(function()
     local i = 1
     local Direction = 1
@@ -342,7 +342,7 @@ function FaceBang()
   end)
 end
 
-function Suck()
+local function Suck()
   task.spawn(function()
     local i = 1
     local Direction = 1
@@ -389,7 +389,7 @@ function Suck()
   end)
 end
 
-function GetBang()
+local function GetBang()
   task.spawn(function()
     local i = 1
     local Direction = 1
@@ -435,7 +435,7 @@ function GetBang()
   end)
 end
 
-function Orbit()
+local function Orbit()
   task.spawn(function()
     local i = 0
     local OrignalGravity = Workspace.Gravity
