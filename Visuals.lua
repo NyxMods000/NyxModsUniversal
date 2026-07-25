@@ -49,6 +49,7 @@ local Config = {
   Fullbright = {
     Enabled = false,
     DefaultBright = nil,
+    DefaultGlobalShadows = nil,
     Brightness = nil,
   }
 }
@@ -422,6 +423,7 @@ Tab:CreateToggle({
     Name = "Fullbright",
     CurrentValue = false,
     Callback = function(State)
+      Config.Fullbright.Enabled = State
       Fullbright()
     end
 })
