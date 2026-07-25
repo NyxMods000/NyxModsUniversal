@@ -61,7 +61,7 @@ local Config = {
 }
 
 --//Functions
-function GetHumanoid()
+local function GetHumanoid()
   local Character = Client and Client.Character
   if Character then
     local Humanoid = Character:FindFirstChild("Humanoid")
@@ -73,7 +73,7 @@ function GetHumanoid()
   return nil
 end
 
-function GetHumanoidRootPart()
+local function GetHumanoidRootPart()
   local Character = Client and Client.Character
   if Character then
     local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
@@ -85,14 +85,14 @@ function GetHumanoidRootPart()
   return nil
 end
 
-function GetMoveDirection()
+local function GetMoveDirection()
   local Humanoid = GetHumanoid()
   if Humanoid then
     return Humanoid and Humanoid.MoveDirection
   end
 end
 
-function UpdateHumanoidProperty(Property,Data)
+local function UpdateHumanoidProperty(Property,Data)
   local Humanoid = GetHumanoid()
   if Humanoid then
     if not Data.Default then
@@ -103,7 +103,7 @@ function UpdateHumanoidProperty(Property,Data)
   return nil
 end
 
-function Teleport(Position)
+local function Teleport(Position)
   local HumanoidRootPart = GetHumanoidRootPart()
   if HumanoidRootPart then
     if typeof(Position) == "CFrame" then
@@ -114,14 +114,14 @@ function Teleport(Position)
   end
 end
 
-function ApplyVelocity(Velocity)
+local function ApplyVelocity(Velocity)
   local HumanoidRootPart = GetHumanoidRootPart()
   if HumanoidRootPart then
     HumanoidRootPart.AssemblyLinearVelocity = Velocity
   end
 end
 
-function UpdateNoclip(Data)
+local function UpdateNoclip(Data)
   local Character = Client.Character
   if Character then
     local Default = Config.Noclip.Default
@@ -144,7 +144,7 @@ function UpdateNoclip(Data)
   end
 end
 
-function CreateTeleportTool()
+local function CreateTeleportTool()
   local Tool = Instance.new("Tool")
   Tool.Name = "Teleport Tool"
   Tool.RequiresHandle = false
@@ -161,7 +161,7 @@ function CreateTeleportTool()
   return Tool
 end
 
-function GetTeleportTool()
+local function GetTeleportTool()
   if Config.TeleportTool.Tool then
     Config.TeleportTool.Tool:Destroy()
   end
@@ -173,7 +173,7 @@ function GetTeleportTool()
   end
 end
 
-function CreatePlatform()
+local function CreatePlatform()
   if Config.AirWalk.Platform then
     return Config.AirWalk.Platform
   end
@@ -190,7 +190,7 @@ function CreatePlatform()
   return Platform
 end
 
-function UpdatePlatform()
+local function UpdatePlatform()
   local Platform = CreatePlatform()
   local HumanoidRootPart = GetHumanoidRootPart()
   local Humanoid = GetHumanoid()
@@ -209,7 +209,7 @@ function UpdatePlatform()
   end
 end
 
-function WayPointTeleport(Type)
+local function WayPointTeleport(Type)
   local HumanoidRootPart = GetHumanoidRootPart()
   if HumanoidRootPart then
     if Type == "Save" then
