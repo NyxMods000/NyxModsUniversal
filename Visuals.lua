@@ -310,8 +310,8 @@ function Fullbright()
     if not Config.Fullbright.DefaultGlobalShadows then
       Config.Fullbright.DefaultGlobalShadows = Lighting.GlobalShadows
     end
-    Config.Brightness = tonumber(Config.Fullbright.Brightness) or Config.Fullbright.DefaultBrightness or 1
-    Config.GlobalShadows = false
+    Lighting.Brightness = tonumber(Config.Fullbright.Brightness) or Config.Fullbright.DefaultBrightness or 1
+    Lighting.GlobalShadows = false
   else
     
     if Config.Fullbright.DefaultBrightness then
