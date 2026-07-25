@@ -1,3 +1,4 @@
+
 --//Variables
 local NyxModsUniversal = getgenv().NyxModsUniversal
 local Window = NyxModsUniversal.Window
@@ -44,7 +45,7 @@ local Config = {
     BoxColor = Color3.fromRGB(0,0,0),
     LineColor = Color3.fromRGB(0,0,0),
     TextColor = Color3.fromRGB(0,0,0)
-  }
+  },
   Fullbright = {
     Enabled = false,
     DefaultBright = nil,
