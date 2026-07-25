@@ -48,7 +48,7 @@ local Config = {
   },
   Fullbright = {
     Enabled = false,
-    DefaultBright = nil,
+    DefaultBrightness = nil,
     DefaultGlobalShadows = nil,
     Brightness = nil,
   }
