@@ -56,7 +56,7 @@ local Config = {
 
 
 --//Functions
-function GetCharacter(Player)
+local function GetCharacter(Player)
   local Character = Player.Character
   if Character then
     return Character
@@ -64,7 +64,7 @@ function GetCharacter(Player)
   return nil
 end
 
-function GetModelInstance(Model,Instance)
+local function GetModelInstance(Model,Instance)
   local Instance = Model:FindFirstChild(Instance)
   if Instance then
     return Instance
@@ -72,7 +72,7 @@ function GetModelInstance(Model,Instance)
   return nil
 end
 
-function GetPlayerInstance(Player,Instance)
+local function GetPlayerInstance(Player,Instance)
   local Character = GetCharacter(Player)
   if Character then
     local Instance = GetModelInstance(Character,Instance)
@@ -83,7 +83,7 @@ function GetPlayerInstance(Player,Instance)
   return nil
 end
 
-function CreateDrawingInstance(Instance,Properties)
+local function CreateDrawingInstance(Instance,Properties)
   local Instance = Drawing.new(Instance)
   for Property,Value in pairs(Properties) do
     Instance[Property] = Value
@@ -91,7 +91,7 @@ function CreateDrawingInstance(Instance,Properties)
   return Instance
 end
 
-function UpdateLine(Line,Part1,Part2)
+local function UpdateLine(Line,Part1,Part2)
   local Camera = Workspace.CurrentCamera
   if Camera then
     local Pos1, OnScreen1 = Camera:WorldToViewportPoint(Part1.Position)
@@ -111,7 +111,7 @@ function UpdateLine(Line,Part1,Part2)
   end
 end
 
-function UpdateBox(Box,Part1,Part2)
+local function UpdateBox(Box,Part1,Part2)
   local Camera = Workspace.CurrentCamera
   if Camera then
     local Pos, OnScreen = Camera:WorldToViewportPoint(Part1.Position)
@@ -129,7 +129,7 @@ function UpdateBox(Box,Part1,Part2)
   end
 end
 
-function UpdateText(Text,Part,Offset,Content)
+local function UpdateText(Text,Part,Offset,Content)
   local Camera = Workspace.CurrentCamera
   if Camera then
     local Distance = (Camera.CFrame.Position - Part.Position).Magnitude
@@ -150,7 +150,7 @@ function UpdateText(Text,Part,Offset,Content)
   end
 end
 
-function CreatePlayerEsp(Player)
+local function CreatePlayerEsp(Player)
   local Text = CreateDrawingInstance("Text",{
     Text = "",
     Center = true,
@@ -197,11 +197,11 @@ function CreatePlayerEsp(Player)
     Skeleton = Skeleton,
     RigType = RigType,
   }
-  
+
   return PlayerEsp
 end
 
-function UpdatePlayerEsp(Player)
+local function UpdatePlayerEsp(Player)
   if not Config.Esp.Objects[Player] then
     Config.Esp.Objects[Player] = CreatePlayerEsp(Player)
   end
@@ -216,13 +216,13 @@ function UpdatePlayerEsp(Player)
     local SkeletonLines = Objects.Skeleton
     local RigType = Humanoid.RigType
     local SkeletonPoints = RigType == Enum.HumanoidRigType.R15 and Esp.R15SkeletonPoints or RigType == Enum.HumanoidRigType.R6 and Esp.R6SkeletonPoints
-    
+
     local Name = Esp.Name
     local DisplayName = Esp.DisplayName
     local Health = Esp.Health
     local Distance = Esp.Distance
     local Skeleton = Esp.Skeleton
-    
+
     if Skeleton and SkeletonPoints then
       for i,Connections in ipairs(SkeletonPoints) do
         local Line = SkeletonLines[i]
@@ -237,8 +237,8 @@ function UpdatePlayerEsp(Player)
         v.Visible = false
       end
     end
-    
-    
+
+
     if Name or DisplayName or Health or Distance then
       local Head = GetPlayerInstance(Player,"Head")
       local HumanoidRootPart1 = GetPlayerInstance(Client,"HumanoidRootPart")
@@ -300,8 +300,8 @@ function UpdatePlayerEsp(Player)
   end
 end
 
-function Fullbright()
-  
+local function Fullbright()
+
   while true do
   if Config.Fullbright.Enabled then
     if not Config.Fullbright.DefaultBrightness then
@@ -313,20 +313,20 @@ function Fullbright()
     Lighting.Brightness = tonumber(Config.Fullbright.Brightness) or Config.Fullbright.DefaultBrightness or 1
     Lighting.GlobalShadows = false
   else
-    
+
     if Config.Fullbright.DefaultBrightness then
       Lighting.Brightness = Config.Fullbright.DefaultBrightness
     end
-    
+
     if Config.Fullbright.DefaultGlobalShadows then
       Lighting.GlobalShadows = Config.Fullbright.DefaultGlobalShadows
     end
-    
+
     break
   end
   task.wait(0.01)
   end
-  
+
 end
 
 
