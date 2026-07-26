@@ -680,8 +680,8 @@ Tab:CreateToggle({
 
 Tab:CreateSlider({
     Name = "Contrast Value",
-    Range = {0, 100}, --- Mínimo y máximo
-    Increment = 0.1, --- De cuánto en cuánto cambia
+    Range = {0, 20}, --- Mínimo y máximo
+    Increment = 0.01, --- De cuánto en cuánto cambia
     Suffix = "Contrast", --- Texto después del valor
     CurrentValue = 1, --- Valor inicial
     Callback = function(Value)
