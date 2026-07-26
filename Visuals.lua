@@ -51,6 +51,16 @@ local Config = {
     DefaultBrightness = nil,
     DefaultGlobalShadows = nil,
     Brightness = nil,
+  },
+  Ambient = {
+    Enabled = false,
+    Color = nil,
+    DefaultColor = nil,
+  },
+  OutdoorAmbient = {
+    Enabled = false,
+    Color = nil,
+    DefaultColor = nil,
   }
 }
 
@@ -302,6 +312,7 @@ end
 
 local function Fullbright()
 
+task.spawn(function()
   while true do
   if Config.Fullbright.Enabled then
     if not Config.Fullbright.DefaultBrightness then
@@ -326,10 +337,47 @@ local function Fullbright()
   end
   task.wait(0.01)
   end
+end)
 
 end
 
+function AmbientColor()
+  task.spawn(function()
+    while true do
+      if Config.Ambient.Enabled then
+        if not Config.Ambient.DefaultColor then
+          Config.Ambient.DefaultColor = Lighting.Ambient
+        end
+        Lighting.Ambient = Config.Ambient.Color
+      else
+        if Config.Ambient.DefaultColor then
+          Lighting.Ambient = Config.Ambient.DefaultColor
+        end
+        break
+      end
+      task.wait(0.01)
+    end
+  end)
+end
 
+function OutdoorAmbientColor()
+  task.spawn(function()
+    while true do
+      if Config.OutdoorAmbient.Enabled then
+        if not Config.OutdoorAmbient.DefaultColor then
+          Config.OutdoorAmbient.DefaultColor = Lighting.OutdoorAmbient
+        end
+        Lighting.OutdoorAmbient = Config.OutdoorAmbient.Color
+      else
+        if Config.OutdoorAmbient.DefaultColor then
+          Lighting.OutdoorAmbient = Config.OutdoorAmbient.DefaultColor
+        end
+        break
+      end
+      task.wait(0.01)
+    end
+  end)
+end
 
 --//Library
 local Tab = Window:CreateTab("Visuals")
@@ -436,6 +484,40 @@ Tab:CreateSlider({
     CurrentValue = 1, --- Valor inicial
     Callback = function(Value)
       Config.Fullbright.Brightness = Value
+    end
+})
+
+Tab:CreateToggle({
+    Name = "Ambient Color",
+    CurrentValue = false,
+    Callback = function(State)
+      Config.Ambient.Enabled = State
+      AmbientColor()
+    end
+})
+
+Tab:CreateColorPicker({
+    Name = "Ambient Color Value",
+    Color = Color3.fromRGB(255, 0, 0),
+    Callback = function(Color)
+      Config.Ambient.Color = Color
+    end
+})
+
+Tab:CreateToggle({
+    Name = "OutdoorAmbient Color",
+    CurrentValue = false,
+    Callback = function(State)
+      Config.OutdoorAmbient.Enabled = State
+      OutdoorAmbientColor()
+    end
+})
+
+Tab:CreateColorPicker({
+    Name = "OutdoorAmbient Color Value",
+    Color = Color3.fromRGB(255, 0, 0),
+    Callback = function(Color)
+      Config.OutdoorAmbient.Color = Color
     end
 })
 
