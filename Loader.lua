@@ -36,14 +36,12 @@ NyxModsUniversal.Window = Library:CreateWindow({
   DragImage = 86507528059862
 })
 
-task.wait(10)
-
 for _,v in ipairs(NyxModsUniversal.TabsOrder) do
   local Executed, Error = pcall(function()
     local Url = NyxModsUniversal.TabsUrl[v]
     if Url ~= "" then
     loadstring(game:HttpGet(Url))()
-    task.wait(5)
+    task.wait(0.5)
     else
       print(tostring(v) .." doesn't have a URL")
     end
