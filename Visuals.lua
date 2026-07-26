@@ -61,6 +61,10 @@ local Config = {
     Enabled = false,
     Color = nil,
     DefaultColor = nil,
+  },
+  RemoveFog = {
+    DefaultFogStart = nil,
+    DefaultFogEnd = nil,
   }
 }
 
@@ -348,7 +352,7 @@ function AmbientColor()
         if not Config.Ambient.DefaultColor then
           Config.Ambient.DefaultColor = Lighting.Ambient
         end
-        Lighting.Ambient = Config.Ambient.Color
+        Lighting.Ambient = Config.Ambient.Color or Color3.fromRGB(0,0,0)
       else
         if Config.Ambient.DefaultColor then
           Lighting.Ambient = Config.Ambient.DefaultColor
@@ -367,7 +371,7 @@ function OutdoorAmbientColor()
         if not Config.OutdoorAmbient.DefaultColor then
           Config.OutdoorAmbient.DefaultColor = Lighting.OutdoorAmbient
         end
-        Lighting.OutdoorAmbient = Config.OutdoorAmbient.Color
+        Lighting.OutdoorAmbient = Config.OutdoorAmbient.Color or Color3.fromRGB(0,0,0)
       else
         if Config.OutdoorAmbient.DefaultColor then
           Lighting.OutdoorAmbient = Config.OutdoorAmbient.DefaultColor
@@ -377,6 +381,24 @@ function OutdoorAmbientColor()
       task.wait(0.01)
     end
   end)
+end
+
+function RemoveFog(State)
+  if not Config.RemoveFog.DefaultFogStart then
+    Config.RemoveFog.DefaultFogStart = Lighting.FogStart
+  end
+  if not Config.RemoveFog.DefaultFogEnd then
+    Config.RemoveFog.DefaultFogEnd = Lighting.FogEnd
+  end
+  
+  if State then
+    Lighting.FogStart = 10000000
+    Lighting.FogEnd = 10000000
+  else
+    Lighting.FogStart = Config.RemoveFog.DefaultFogStart or 0
+    Lighting.FogEnd = Config.RemoveFog.DefaultFogEnd or 100
+  end
+  
 end
 
 --//Library
@@ -518,6 +540,14 @@ Tab:CreateColorPicker({
     Color = Color3.fromRGB(255, 0, 0),
     Callback = function(Color)
       Config.OutdoorAmbient.Color = Color
+    end
+})
+
+Tab:CreateToggle({
+    Name = "Remove Fog",
+    CurrentValue = false,
+    Callback = function(State)
+      RemoveFog(State)
     end
 })
 
