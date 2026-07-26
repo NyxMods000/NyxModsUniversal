@@ -76,6 +76,9 @@ local Config = {
     Contrast = nil,
     DefaultContrast = nil,
     CreatedByScript = false,
+  },
+  Xray = {
+    DefaultTransparency = {},
   }
 }
 
@@ -356,7 +359,7 @@ end)
 
 end
 
-function AmbientColor()
+local function AmbientColor()
   task.spawn(function()
     while true do
       if Config.Ambient.Enabled then
@@ -375,7 +378,7 @@ function AmbientColor()
   end)
 end
 
-function OutdoorAmbientColor()
+local function OutdoorAmbientColor()
   task.spawn(function()
     while true do
       if Config.OutdoorAmbient.Enabled then
@@ -394,7 +397,7 @@ function OutdoorAmbientColor()
   end)
 end
 
-function RemoveFog(State)
+local function RemoveFog(State)
   if not Config.RemoveFog.DefaultFogStart then
     Config.RemoveFog.DefaultFogStart = Lighting.FogStart
   end
@@ -412,7 +415,7 @@ function RemoveFog(State)
   
 end
 
-function ClockTime()
+local function ClockTime()
   task.spawn(function()
     while true do
       if Config.ClockTime.Enabled then
@@ -431,7 +434,7 @@ function ClockTime()
   end)
 end
 
-function Contrast()
+local function Contrast()
   task.spawn(function()
     while true do
       if Config.Contrast.Enabled then
@@ -471,6 +474,29 @@ function Contrast()
       task.wait(0.01)
     end
   end)
+end
+
+function Xray(State)
+  if State then
+    for i,v in ipairs(Workspace:GetDescendants()) do
+      if v:IsA("BasePart") then
+        if not Config.Xray.DefaultTransparency[v] then
+          Config.Xray.DefaultTransparency[v] = v.Transparency
+        end
+        v.Transparency = 0.6
+      end
+    end
+  else
+    for i,v in ipairs(Workspace:GetDescendants()) do
+      if v:IsA("BasePart") then
+        if Config.Xray.DefaultTransparency[v] then
+          v.Transparency = Config.Xray.DefaultTransparency[v]
+        else
+          v.Transparency = 0
+        end
+      end
+    end
+  end
 end
 
 --//Library
@@ -660,6 +686,14 @@ Tab:CreateSlider({
     CurrentValue = 1, --- Valor inicial
     Callback = function(Value)
       Config.Contrast.Contrast = Value
+    end
+})
+
+Tab:CreateToggle({
+    Name = "Xray",
+    CurrentValue = false,
+    Callback = function(State)
+      Xray(State)
     end
 })
 
