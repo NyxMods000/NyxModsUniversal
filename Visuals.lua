@@ -65,6 +65,11 @@ local Config = {
   RemoveFog = {
     DefaultFogStart = nil,
     DefaultFogEnd = nil,
+  },
+  ClockTime = {
+    Enabled = false,
+    Time = nil,
+    DefaultTime = nil,
   }
 }
 
@@ -396,9 +401,28 @@ function RemoveFog(State)
     Lighting.FogEnd = 10000000
   else
     Lighting.FogStart = Config.RemoveFog.DefaultFogStart or 0
-    Lighting.FogEnd = Config.RemoveFog.DefaultFogEnd or 100
+    Lighting.FogEnd = Config.RemoveFog.DefaultFogEnd or 2000
   end
   
+end
+
+function ClockTime()
+  task.spawn(function()
+    while true do
+      if Config.ClockTime.Enabled then
+        if not Config.ClockTime.DefaultTime then
+          Config.ClockTime.DefaultTime = Lighting.ClockTime
+        end
+        Lighting.ClockTime = Config.ClockTime.Time
+      else
+        if Config.ClockTime.DefaultTime then
+          Lighting.ClockTime = Config.ClockTime.DefaultTime
+        end
+        break
+      end
+      task.wait(0.01)
+    end
+  end)
 end
 
 --//Library
@@ -548,6 +572,26 @@ Tab:CreateToggle({
     CurrentValue = false,
     Callback = function(State)
       RemoveFog(State)
+    end
+})
+
+Tab:CreateToggle({
+    Name = "Clock Time",
+    CurrentValue = false,
+    Callback = function(State)
+      Config.ClockTime.Enabled = State
+      ClockTime()
+    end
+})
+
+Tab:CreateSlider({
+    Name = "Clock Time Value",
+    Range = {0, 24}, --- Mínimo y máximo
+    Increment = 0.01, --- De cuánto en cuánto cambia
+    Suffix = "Brightness", --- Texto después del valor
+    CurrentValue = 1, --- Valor inicial
+    Callback = function(Value)
+      Config.ClockTime.Time = Value
     end
 })
 
