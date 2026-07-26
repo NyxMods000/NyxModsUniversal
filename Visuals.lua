@@ -643,6 +643,26 @@ Tab:CreateSlider({
     end
 })
 
+Tab:CreateToggle({
+    Name = "Contrast",
+    CurrentValue = false,
+    Callback = function(State)
+      Config.Contrast.Enabled = State
+      Contrast()
+    end
+})
+
+Tab:CreateSlider({
+    Name = "Contrast Value",
+    Range = {0, 100}, --- Mínimo y máximo
+    Increment = 0.1, --- De cuánto en cuánto cambia
+    Suffix = "Contrast", --- Texto después del valor
+    CurrentValue = 1, --- Valor inicial
+    Callback = function(Value)
+      Config.Contrast.Contrast = Value
+    end
+})
+
 --//Events
 Players.PlayerRemoving:Connect(function(Player)
   if Config.Esp.Objects[Player] then
