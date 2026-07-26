@@ -70,6 +70,12 @@ local Config = {
     Enabled = false,
     Time = nil,
     DefaultTime = nil,
+  },
+  Contrast = {
+    Enabled = false,
+    Contrast = nil,
+    DefaultContrast = nil,
+    CreatedByScript = false,
   }
 }
 
@@ -417,6 +423,48 @@ function ClockTime()
       else
         if Config.ClockTime.DefaultTime then
           Lighting.ClockTime = Config.ClockTime.DefaultTime
+        end
+        break
+      end
+      task.wait(0.01)
+    end
+  end)
+end
+
+function Contrast()
+  task.spawn(function()
+    while true do
+      if Config.Contrast.Enabled then
+        if Lighting:FindFirstChildWhichIsA("ColorCorrectionEffect") then
+          local ColorCorrectionEffect = Lighting:FindFirstChildWhichIsA("ColorCorrectionEffect")
+          
+          if not Config.Contrast.DefaultContrast and not Config.Contrast.CreatedByScript then
+            Config.Contrast.DefaultContrast = ColorCorrectionEffect.Contrast
+          end
+          
+          ColorCorrectionEffect.Contrast = Config.Contrast.Contrast
+        else
+          local ColorCorrectionEffect = Instance.new("ColorCorrectionEffect")
+          ColorCorrectionEffect.Parent = Lighting
+          
+          Config.Contrast.CreatedByScript = true
+          
+          ColorCorrectionEffect.Contrast = Config.Contrast.Contrast
+        end
+      else
+        if not Config.Contrast.CreatedByScript then
+          if Lighting:FindFirstChildWhichIsA("ColorCorrectionEffect") then
+            local ColorCorrectionEffect = Lighting:FindFirstChildWhichIsA("ColorCorrectionEffect")
+            
+            ColorCorrectionEffect.Contrast = Config.Contrast.DefaultContrast
+          end
+        else
+          if Lighting:FindFirstChildWhichIsA("ColorCorrectionEffect") then
+            local ColorCorrectionEffect = Lighting:FindFirstChildWhichIsA("ColorCorrectionEffect")
+            
+            ColorCorrectionEffect:Destroy()
+            Config.Contrast.CreatedByScript = false
+          end
         end
         break
       end
