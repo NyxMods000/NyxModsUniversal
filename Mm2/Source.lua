@@ -59,7 +59,7 @@ local Sheriff = {
  AutoHackerShoot = false,
  Prediction = false,
  PredictionValue = 0,
- 
+
  SilentAim = false,
 
  AutoGetDroppedGun = false,
@@ -2388,15 +2388,18 @@ UserInputService.InputEnded:Connect(function(Input,GameProcessed)
  if GameProcessed then
   return
  end
- 
+
  if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-  local Movement = (ClickStart - Input.Position).Magnitude
   
+  if ClickStart ~= nil then
+  local Movement = (ClickStart - Input.Position).Magnitude
+
   if Movement <= MaxMovement then
    if Sheriff.SilentAim then
     ShootMurderer(false)
    end
   end
-  
- end
+
+  end
+end
 end)
