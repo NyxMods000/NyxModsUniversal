@@ -2396,7 +2396,15 @@ UserInputService.InputEnded:Connect(function(Input,GameProcessed)
 
   if Movement <= MaxMovement then
    if Sheriff.SilentAim then
-    ShootMurderer(false)
+    local Gun = FindGun(Client)
+    if Gun then
+     local Character = Client and Client.Character
+     if Character then
+      if Gun.Parent == Character then
+       ShootMurderer(false)
+      end
+     end
+    end
    end
   end
 
