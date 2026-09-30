@@ -2399,6 +2399,7 @@ UserInputService.InputEnded:Connect(function(Input,GameProcessed)
   local Movement = (ClickStart - Input.Position).Magnitude
 
   if Movement <= MaxMovement then
+    print("Movimiento del click Menor")
    if Sheriff.SilentAim then
     local Gun = FindGun(Client)
     if Gun then
