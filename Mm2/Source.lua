@@ -2380,7 +2380,9 @@ UserInputService.InputBegan:Connect(function(Input,GameProcessed)
    Hitbox()
   end
  elseif Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
+  print("Click detectado")
   ClickStart = Input.Position
+  print("Click guardado")
  end
 end)
 
@@ -2390,6 +2392,8 @@ UserInputService.InputEnded:Connect(function(Input,GameProcessed)
  end
 
  if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
+  
+  print("Fin del click detectado")
   
   if ClickStart ~= nil then
   local Movement = (ClickStart - Input.Position).Magnitude
@@ -2401,12 +2405,16 @@ UserInputService.InputEnded:Connect(function(Input,GameProcessed)
      local Character = Client and Client.Character
      if Character then
       if Gun.Parent == Character then
+       print("Disparando")
        ShootMurderer(false)
+       print("Disparo exitoso")
       end
      end
     end
    end
   end
+  
+  print("Fin del click")
 
   end
 end
