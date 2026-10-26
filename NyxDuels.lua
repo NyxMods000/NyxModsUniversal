@@ -29,7 +29,7 @@ function Utils:Character(Player)
     if not Player then
         return
     end
-    
+
     return Player.Character
 end
 
@@ -37,7 +37,7 @@ function Utils:GetCharacterInstance(Character,Name)
     if not Character or not Name then
         return
     end
-    
+
     return Character:FindFirstChild(Name,true)
 end
 
@@ -45,14 +45,14 @@ function Utils:TeamCheck(Player,WaitForTeam)
     if not Player then
         return
     end
-    
+
     local Character = self:Character(Player)
     if not Character then
         return
     end
-    
+
     local IsTeam = Utils:GetCharacterInstance(Character,"TeammateIconPart") 
-        
+
     return IsTeam
 end
 
@@ -60,48 +60,48 @@ function Utils:WallCheck(PlayerA,PlayerB)
     if not PlayerA or not PlayerB then
         return true
     end
-    
+
     local CharacterA = self:Character(PlayerA)
     local CharacterB = self:Character(PlayerB)
     if not CharacterA or not CharacterB then
         return true
     end
-    
+
     local RootPartA = self:GetCharacterInstance(CharacterA,"HumanoidRootPart")
     if not RootPartA then
         return true
     end
-    
+
     local Params = RaycastParams.new()
     Params.FilterType = Enum.RaycastFilterType.Exclude
     Params.FilterDescendantsInstances = {
         CharacterA
     }
-    
+
     for _,Object in ipairs(CharacterB:GetChildren()) do
         if not Object:IsA("BasePart") then
             continue
         end
-            
+
             local Origin = RootPartA.Position
             local Direction = (Object.Position - RootPartA.Position) 
-            
+
             local Result = Workspace:Raycast(Origin,Direction,Params)
-            
+
             if not Result then
                 continue
             end
-            
+
             if not Result.Instance then
                 continue
             end
-            
+
             if Result.Instance:IsDescendantOf(CharacterB) then
                 return false, Result.Instance
             end
-            
+
     end
-    
+
     return true
 end
 
@@ -109,17 +109,17 @@ function Utils:IsDead(Player)
     if not Player then
         return
     end
-    
+
     local Character = self:Character(Player)
     if not Character then
         return
     end
-    
+
     local Humanoid = self:GetCharacterInstance(Character,"Humanoid")
     if not Humanoid then
         return
     end
-    
+
     return Humanoid.Health == 0 or false
 end
 
@@ -127,17 +127,17 @@ function Utils:OnLobby()
     local PlayerGui = Client:FindFirstChild("PlayerGui")
     local Main = PlayerGui and PlayerGui:FindFirstChild("Main")
     local MainGameFrame = Main and Main:FindFirstChild("MainGameFrame")
-    
+
     if not MainGameFrame or not MainGameFrame.Visible then
         return true
     end
-    
+
     return false
 end
 
 function Utils:GetClosestPlayers()
     local ClosestPlayers = {}
-    
+
     local Character  = self:Character(Client)
     if not Character then
         ClosestPlayers = {{
@@ -147,7 +147,7 @@ function Utils:GetClosestPlayers()
        Cache.ClosestPlayers = ClosestPlayers
         return
     end
-    
+
     local RootPart = self:GetCharacterInstance(Character,"HumanoidRootPart")
     if not RootPart then
      ClosestPlayers = {{
@@ -157,34 +157,34 @@ function Utils:GetClosestPlayers()
        Cache.ClosestPlayers = ClosestPlayers
         return
     end
-    
+
     for _,Player in ipairs(Players:GetPlayers()) do
         if Player == Client then
             continue
         end
-        
+
         local PlayerCharacter = self:Character(Player)
         if not PlayerCharacter then
             continue
         end
-        
+
         local PlayerRootPart = self:GetCharacterInstance(PlayerCharacter,"HumanoidRootPart")
         if not PlayerRootPart then
             continue
         end
-        
+
         local Distance = (RootPart.Position - PlayerRootPart.Position).Magnitude
-        
+
         table.insert(ClosestPlayers,{
             Player = Player,
             Distance = Distance,
         })
     end
-    
+
     table.sort(ClosestPlayers,function(DataA,DataB)
         return DataA.Distance < DataB.Distance
     end)
-    
+
     Cache.ClosestPlayers = ClosestPlayers
     return ClosestPlayers
 end
@@ -193,19 +193,19 @@ function Utils:GetGun(Player)
     if not Player then
         return
     end
-    
+
     local Backpack = Player.Backpack
     local Character = self:Character(Player)
-    
+
     if not Backpack or not Character then
         return
     end
-    
+
     local Fire = Backpack:FindFirstChild("fire",true) or Character:FindFirstChild("fire",true)
     if not Fire then
         return
     end
-    
+
     return Fire and Fire.Parent or nil
 end
 
@@ -213,19 +213,19 @@ function Utils:GetKnife(Player)
     if not Player then
         return
     end
-    
+
     local Backpack = Player.Backpack
     local Character = self:Character(Player)
-    
+
     if not Backpack or not Character then
         return
     end
-    
+
     local Throw = Backpack:FindFirstChild("Throw",true) or Character:FindFirstChild("Throw",true)
     if not Throw then
         return
     end
-    
+
     return Throw and Throw.Parent or nil
 end
 
@@ -233,12 +233,12 @@ function Utils:EquipTool(Tool)
     if not Tool then
         return
     end
-    
+
     local Character = self:Character(Client)
     if not Character then
         return
     end
-    
+
     pcall(function()
     Tool.Parent = Character
     end)
@@ -249,22 +249,22 @@ function Utils:ChangeKnifeMode(State)
  if not PlayerGui then
   return
  end
- 
+
  local Main = PlayerGui:FindFirstChild("Main")
  if not Main then
   return
  end
- 
+
  local MobileKnifeGui = Main:FindFirstChild("MobileKnifeGui")
  if not MobileKnifeGui then
   return
  end
- 
+
  local ThrowMode = MobileKnifeGui:FindFirstChild("ThrowMode")
  if not ThrowMode then
   return
  end
- 
+
  ThrowMode.Value = State
 end
 
@@ -272,9 +272,9 @@ end
 
 local AimbotManager = {
     State = false,
-    
+
     Methods = {},
-    
+
     TeamCheck = true,
     WallCheck = false,
     IgnoreDead = true,
@@ -282,102 +282,102 @@ local AimbotManager = {
 
 function AimbotManager.Methods:GetTarget()
     local ClosestPlayers = Cache.ClosestPlayers
-    
+
     for _,Data in ipairs(ClosestPlayers) do
         local Player = Data.Player
         if not Player then
             continue
         end
-        
+
         if AimbotManager.TeamCheck then
             if Utils:TeamCheck(Player,false) then
                 continue
             end
         end
-        
+
         if AimbotManager.WallCheck then
             if Utils:WallCheck(Client,Player) then
                 continue
             end
         end
-        
+
         if AimbotManager.IgnoreDead then
             if Utils:IsDead(Player) then
                 continue
             end
         end
-        
+
         return Player
-        
+
     end
-    
+
     return nil
 end
 
 --!mv:omit
 function AimbotManager.Methods:EnableAimbot()
     local Connection
-    
+
     Connection = RunService.Heartbeat:Connect(function()
         if not AimbotManager.State then
             Connection:Disconnect()
             return
         end
-        
+
         if Utils:IsDead(Client) then
             return
         end
-        
+
         if Utils:OnLobby() then
             return
         end
-        
+
         local Target = AimbotManager.Methods:GetTarget()
         if not Target then
             return
         end
-        
+
         local Character = Utils:Character(Target)
         if not Character then
             return
         end
-        
+
         local Part = nil
-        
+
         if AimbotManager.WallCheck then
             local WallCheck,VisiblePart = Utils:WallCheck(Client,Target)
             if not VisiblePart then
                 return
             end
-            
+
             Part = VisiblePart
         end
-        
+
         if not AimbotManager.WallCheck then
             Part = Utils:GetCharacterInstance(Character,"HumanoidRootPart")
         end
-        
+
         if not Part then
             return
         end
-        
+
         local Camera = Workspace.CurrentCamera
         if not Camera then
             return
         end
-        
+
         Camera.CameraType = Enum.CameraType.Track
         Camera.CFrame = CFrame.lookAt(Camera.CFrame.Position,Part.Position)
-        
+
     end)
 end
 
 --// Auto Shoot
 local AutoShootManager = {
     State = false,
-    
+
     Methods = {},
-    
+
     TeamCheck = true,
     WallCheck = true,
     IgnoreDead = true,
@@ -385,118 +385,118 @@ local AutoShootManager = {
 
 function AutoShootManager.Methods:GetTarget()
     local ClosestPlayers = Cache.ClosestPlayers
-    
+
     for _,Data in ipairs(ClosestPlayers) do
         local Player = Data.Player
         if not Player then
             continue
         end
-        
+
         if AutoShootManager.TeamCheck then
             if Utils:TeamCheck(Player,false) then
                 continue
             end
         end
-        
+
         if AutoShootManager.WallCheck then
             if Utils:WallCheck(Client,Player) then
                 continue
             end
         end
-        
+
         if AutoShootManager.IgnoreDead then
             if Utils:IsDead(Player) then
                 continue
             end
         end
-        
+
         return Player
-        
+
     end
 end
 
 function AutoShootManager.Methods:GetFallBackTarget()
  local ClosestPlayers = Cache.ClosestPlayers
-    
+
     for _,Data in ipairs(ClosestPlayers) do
         local Player = Data.Player
         if not Player then
             continue
         end
-        
+
         if AutoShootManager.TeamCheck then
             if Utils:TeamCheck(Player,false) then
                 continue
             end
         end
-        
+
         if AutoShootManager.IgnoreDead then
             if Utils:IsDead(Player) then
                 continue
             end
         end
-        
+
         return Player
-        
+
     end
 end
 
 --!mv:omit
 function AutoShootManager.Methods:EnableAutoShoot()
     local LastShoot = os.clock()
-    
+
     local Connection
-    
+
     Connection = RunService.Heartbeat:Connect(function()
         if not AutoShootManager.State then
             Connection:Disconnect()
             return
         end
-        
+
         if Utils:IsDead(Client) then
             return
         end
-        
+
         if Utils:OnLobby() then
             return
         end
-        
+
         local Target = AutoShootManager.Methods:GetTarget()
         if not Target then
             return
         end
-        
+
         local Character = Utils:Character(Target)
         if not Character then
             return
         end
-        
+
         local Part = nil
-        
+
         if AutoShootManager.WallCheck then
             local WallCheck,VisiblePart = Utils:WallCheck(Client,Target)
             if not VisiblePart then
                 return
             end
-            
+
             Part = VisiblePart
         end
-        
+
         if not AutoShootManager.WallCheck then
             Part = Utils:GetCharacterInstance(Character,"HumanoidRootPart")
         end
-        
+
         if not Part then
             return
         end
-        
+
         local Gun = Utils:GetGun(Client)
         if not Gun then
             return
         end
-        
+
         if os.clock() - LastShoot >= 2.6 then
-         
+
          for _,Script in ipairs(Gun:GetChildren()) do
          if Script:IsA("LocalScript") then
           Script.Enabled = false
@@ -505,20 +505,20 @@ function AutoShootManager.Methods:EnableAutoShoot()
           task.wait(0.05)
          end
         end
-         
+
             Utils:EquipTool(Gun)
             Gun:Activate()
             LastShoot = os.clock()
         end
-        
+
     end)
 end
 
 local OrbsFarmManager = {
     State = false,
-    
+
     Methods = {},
-    
+
     CollectOrbDelay = 1,
     InstaCollect = false,
 }
@@ -528,17 +528,17 @@ function OrbsFarmManager.Methods:GetOrbs()
     if not SpawnablesClient then
         return nil
     end
-    
+
     local Orbs = {}
     for _,Orb in ipairs(SpawnablesClient:GetChildren()) do
         local Touch = Orb:FindFirstChild("Touch")
         if not Touch then
             continue
         end
-        
+
         table.insert(Orbs,Touch)
     end
-    
+
     return Orbs
 end
 
@@ -548,50 +548,50 @@ function OrbsFarmManager.Methods:AutoFarmOrbsEnable()
             if not OrbsFarmManager.State then
                 break
             end
-            
+
             local Character = Utils:Character(Client)
             if not Character then
                 continue
             end
-            
+
             local RootPart = Utils:GetCharacterInstance(Character,"HumanoidRootPart")
             if not RootPart then
                 continue
             end
-            
+
             local Orbs = self:GetOrbs()
-            
+
             if not Orbs then
                 continue
             end
-            
+
             for _,Orb in ipairs(Orbs) do
                 if not Orb then
                     continue
                 end
-                
+
                 if not Orb:IsA("BasePart") then
                     continue
                 end
-                
+
                 if not Orb.Parent then
                     continue
                 end
-                
+
                 if not firetouchinterest then
                     continue
                 end
-                
+
                 pcall(function()
                 firetouchinterest(RootPart,Orb,0)
                 task.wait(0.01)
                 firetouchinterest(RootPart,Orb,1)
                 end)
-                
+
                 if not OrbsFarmManager.InstaCollect then
                     task.wait(OrbsFarmManager.CollectOrbDelay)
                 end
-                
+
             end
             task.wait(0.01)
         end
@@ -601,18 +601,18 @@ end
 --// Esp
 local EspManager = {
     State = false,
-    
+
     Methods = {},
-    
+
     EspObjects = {},
-    
+
     TeamColor = Color3.fromRGB(0,255,0),
     EnemyColor = Color3.fromRGB(255,0,0),
     ClientColor = Color3.fromRGB(128, 0, 255),
-    
+
     FillTransparency = 0.5,
     OutlineTransparency = 0,
-    
+
     ExcludeClient = false,
 }
 
@@ -647,12 +647,12 @@ function EspManager.Methods:RemoveEsp(Player)
     if not Player then
         return
     end
-    
+
     local Esp = EspManager.EspObjects[Player]
     if not Esp then
         return
     end
-    
+
     Esp:Destroy()
     EspManager.EspObjects[Player] = nil
 end
@@ -698,14 +698,14 @@ end
 
 local HitboxManager = {
  State = false,
- 
+
  Objects = {},
  Methods = {},
- 
+
  Size = 10,
  Transparency = 0.5,
  Color = Color3.fromRGB(0,0,0),
- 
+
  TeamCheck = true,
  IgnoreDead = true,
 }
@@ -714,21 +714,21 @@ function HitboxManager.Methods:CreateHitbox(Player)
  if not Player then
   return
  end
- 
+
  if Player == Client then
   return
  end
- 
+
  local Character = Utils:Character(Player)
  if not Character then
   return
  end
- 
+
  local RootPart = Utils:GetCharacterInstance(Character,"HumanoidRootPart")
  if not RootPart then
   return
  end
- 
+
  local Hitbox = Instance.new("Part")
  Hitbox.Name = "H"
  Hitbox.Size = Vector3.one * HitboxManager.Size
@@ -741,16 +741,16 @@ function HitboxManager.Methods:CreateHitbox(Player)
  Hitbox.CanQuery = true
  Hitbox.Anchored = false
  Hitbox.Parent = Character
- 
+
  Hitbox.CFrame = RootPart.CFrame
- 
+
  local Weld = Instance.new("WeldConstraint")
  Weld.Part0 = Hitbox
  Weld.Part1 = RootPart
  Weld.Parent = Hitbox
- 
+
  HitboxManager.Objects[Player] = Hitbox
- 
+
  Hitbox.Size = HitboxManager.State and Vector3.one * HitboxManager.Size or Vector3.zero
  return Hitbox
 end
@@ -833,9 +833,9 @@ local PowerfulManager = {
     TpKill = {
         InProgress = false,
         TargetsCount = 1,
-        
+
         CurrentTarget = nil,
-        
+
         Methods = {},
     }
 }
@@ -847,7 +847,7 @@ function PowerfulManager.TpKill.Methods:GetTargets()
         if #Targets >= PowerfulManager.TpKill.TargetsCount then
             break
         end
-        
+
         local Data = Cache.ClosestPlayers[i]
 
         if not Data then
@@ -879,48 +879,48 @@ function PowerfulManager.TpKill.Methods:TpKill()
     if PowerfulManager.TpKill.InProgress then
         return
     end
-    
+
     Utils:GetClosestPlayers()
     PowerfulManager.TpKill.InProgress = true
-    
+
     local Targets = self:GetTargets()
     if #Targets == 0 then
         PowerfulManager.TpKill.InProgress = false
         return
     end
-    
+
     for _,Target in ipairs(Targets) do
-        
+
         if not Target then
             continue
         end
-        
+
         if Utils:IsDead(Target) then
             continue
         end
-        
+
         PowerfulManager.TpKill.CurrentTarget = Target
-        
+
         local Character = Utils:Character(Target)
         local MyCharacter = Utils:Character(Client)
         if not Character or not MyCharacter then
             continue
         end
-        
+
         local RootPart = Utils:GetCharacterInstance(Character,"HumanoidRootPart")
         local MyRootPart = Utils:GetCharacterInstance(MyCharacter,"HumanoidRootPart")
         if not RootPart or not MyRootPart then
             continue
         end
-        
+
         local Gun = Utils:GetGun(Client)
         if not Gun then
             continue
         end
-        
+
         local TeleportA = true
         local OldCFrame = MyRootPart.CFrame
-        
+
         task.spawn(function()
             while true do
                 if TeleportA == true then
@@ -937,7 +937,7 @@ function PowerfulManager.TpKill.Methods:TpKill()
                 task.wait(0.01)
             end
         end)
-        
+
         for _,Script in ipairs(Gun:GetChildren()) do
          if Script:IsA("LocalScript") then
           Script.Enabled = false
@@ -946,8 +946,8 @@ function PowerfulManager.TpKill.Methods:TpKill()
           task.wait(0.05)
          end
         end
-        
-        task.wait(0.5)
+
+        task.wait(1)
         Gun.Parent = MyCharacter
         Gun:Activate()
         task.wait(0.25)
@@ -956,7 +956,7 @@ function PowerfulManager.TpKill.Methods:TpKill()
         TeleportA = "Stop"
         task.wait(2.6)
     end
-    
+
     PowerfulManager.TpKill.InProgress = false
     PowerfulManager.TpKill.CurrentTarget = nil
 end
@@ -985,11 +985,11 @@ AimbotTab:Toggle({
     Value = false,
     Callback = function(Value)
         AimbotManager.State = Value
-        
+
         if Value then
             AimbotManager.Methods:EnableAimbot()
         end
-        
+
     end
 })
 
@@ -1032,11 +1032,11 @@ AutoShootTab:Toggle({
     Value = false,
     Callback = function(Value)
         AutoShootManager.State = Value
-        
+
         if Value then
             AutoShootManager.Methods:EnableAutoShoot()
         end
-        
+
     end
 })
 
@@ -1080,7 +1080,7 @@ HitboxTab:Toggle({
     Value = HitboxManager.State,
     Callback = function(Value)
         HitboxManager.State = Value
-        
+
         HitboxManager.Methods:RequestUpdate()
     end
 })
@@ -1090,7 +1090,7 @@ HitboxTab:Toggle({
     Value = HitboxManager.TeamCheck,
     Callback = function(Value)
         HitboxManager.TeamCheck = Value
-        
+
         HitboxManager.Methods:RequestUpdate()
     end
 })
@@ -1100,7 +1100,7 @@ HitboxTab:Toggle({
     Value = HitboxManager.IgnoreDead,
     Callback = function(Value)
         HitboxManager.IgnoreDead = Value
-        
+
         HitboxManager.Methods:RequestUpdate()
     end
 })
@@ -1115,7 +1115,7 @@ HitboxTab:Slider({
     },
     Callback = function(Value)
         HitboxManager.Size = Value
-        
+
         HitboxManager.Methods:RequestUpdate()
     end
 })
@@ -1129,7 +1129,7 @@ HitboxTab:Slider({
     },
     Callback = function(Value)
         HitboxManager.Transparency = Value / 100
-        
+
         HitboxManager.Methods:RequestUpdate()
     end
 })
@@ -1140,7 +1140,7 @@ HitboxTab:Colorpicker({
     Default = HitboxManager.Color,
     Callback = function(Value)
         HitboxManager.Color = Value
-        
+
         HitboxManager.Methods:RequestUpdate()
     end
 })
@@ -1189,11 +1189,11 @@ OrbsFarmTab:Toggle({
     Value = false,
     Callback = function(Value)
         OrbsFarmManager.State = Value
-        
+
         if Value then
             OrbsFarmManager.Methods:AutoFarmOrbsEnable()
         end
-        
+
     end
 })
 
@@ -1233,7 +1233,7 @@ EspTab:Toggle({
     Value = false,
     Callback = function(Value)
         EspManager.State = Value
-        
+
         for _,Player in ipairs(Players:GetPlayers()) do
             EspManager.Methods:UpdateEsp(Player)
         end
@@ -1245,7 +1245,7 @@ EspTab:Toggle({
     Value = false,
     Callback = function(Value)
         EspManager.ExcludeClient = Value
-        
+
         for _,Player in ipairs(Players:GetPlayers()) do
             EspManager.Methods:UpdateEsp(Player)
         end
@@ -1257,7 +1257,7 @@ EspTab:Colorpicker({
     Default = Color3.fromRGB(0, 255, 0),
     Callback = function(Color)
         EspManager.TeamColor = Color
-        
+
         for _,Player in ipairs(Players:GetPlayers()) do
             EspManager.Methods:UpdateEsp(Player)
         end
@@ -1269,7 +1269,7 @@ EspTab:Colorpicker({
     Default = Color3.fromRGB(255, 0, 0),
     Callback = function(Color)
         EspManager.EnemyColor = Color
-        
+
         for _,Player in ipairs(Players:GetPlayers()) do
             EspManager.Methods:UpdateEsp(Player)
         end
@@ -1281,7 +1281,7 @@ EspTab:Colorpicker({
     Default = Color3.fromRGB(128, 0, 255),
     Callback = function(Color)
         EspManager.ClientColor = Color
-        
+
         for _,Player in ipairs(Players:GetPlayers()) do
             EspManager.Methods:UpdateEsp(Player)
         end
@@ -1297,7 +1297,7 @@ EspTab:Slider({
     },
     Callback = function(Value)
         EspManager.FillTransparency = Value / 100
-        
+
         for _,Player in ipairs(Players:GetPlayers()) do
             EspManager.Methods:UpdateEsp(Player)
         end
@@ -1313,7 +1313,7 @@ EspTab:Slider({
     },
     Callback = function(Value)
         EspManager.OutlineTransparency = Value / 100
-        
+
         for _,Player in ipairs(Players:GetPlayers()) do
             EspManager.Methods:UpdateEsp(Player)
         end
@@ -1338,22 +1338,22 @@ local function SetupPlayer(Player)
             end
 
             EspManager.Methods:UpdateEsp(Player)
-            
+
             HitboxManager.Methods:CreateHitbox(Player)
             HitboxManager.Methods:UpdateHitbox(Player)
-            
+
             Character.DescendantAdded:Connect(function()
                 EspManager.Methods:UpdateEsp(Player)
                 HitboxManager.Methods:UpdateHitbox(Player)
             end)
-            
+
             local Humanoid = Character and (Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid"))
             if Humanoid then
-             
+
              Humanoid.Died:Connect(function()
               HitboxManager.Methods:UpdateHitbox(Player)
              end)
-             
+
             end
         end)
     end)
@@ -1406,131 +1406,131 @@ MetaTable.__index = function(Self,Property)
     if not AimbotManager.State and not AutoShootManager.State and not PowerfulManager.TpKill.InProgress then
         return OldIndex(Self,Property)
     end
-    
+
     local Mouse = Client:GetMouse()
-    
+
     if Self ~= Mouse then
         return OldIndex(Self,Property)
     end
-    
+
     if Property ~= "Hit" and Property ~= "Target" then
         return OldIndex(Self,Property)
     end
-    
+
     --// TpKill
     if PowerfulManager.TpKill.InProgress then
         local Target = PowerfulManager.TpKill.CurrentTarget
         if not Target then
             return OldIndex(Self,Property)
         end
-        
+
         local Character = Utils:Character(Target)
         if not Character then
             return OldIndex(Self,Property)
         end
-        
+
         local Part = Utils:GetCharacterInstance(Character,"HumanoidRootPart")
-        
+
         if not Part then
             return OldIndex(Self,Property)
         end
-        
+
         if Property == "Hit" then
             return Part.CFrame
         elseif Property == "Target" then
             return Part
         end
     end
-    
+
     --// AutoShoot
     if AutoShootManager.State then
         local FallBack = false
-        
+
         local Target = AutoShootManager.Methods:GetTarget()
         if not Target then
          Target = AutoShootManager.Methods:GetFallBackTarget()
          FallBack = true
         end
-        
+
         if not Target then
          return OldIndex(Self,Property)
         end
-        
+
         local Character = Utils:Character(Target)
         if not Character then
             return OldIndex(Self,Property)
         end
-        
+
         local Part = nil
-        
+
         if AutoShootManager.WallCheck then
             local WallCheck,VisiblePart = Utils:WallCheck(Client,Target)
-            
+
             if VisiblePart then
                 Part = VisiblePart
             end
-            
+
             if not VisiblePart then
              if FallBack then
              Part =  Utils:GetCharacterInstance(Character,"HumanoidRootPart")
              end
             end
         end
-        
+
         if not AutoShootManager.WallCheck then
             Part = Utils:GetCharacterInstance(Character,"HumanoidRootPart")
         end
-        
+
         if not Part then
             return OldIndex(Self,Property)
         end
-        
+
         if Property == "Hit" then
             return Part.CFrame
         elseif Property == "Target" then
             return Part
         end
     end
-    
+
     --// Aimbot
     if AimbotManager.State then
         local Target = AimbotManager.Methods:GetTarget()
         if not Target then
             return OldIndex(Self,Property)
         end
-        
+
         local Character = Utils:Character(Target)
         if not Character then
             return OldIndex(Self,Property)
         end
-        
+
         local Part = nil
-        
+
         if AimbotManager.WallCheck then
             local WallCheck,VisiblePart = Utils:WallCheck(Client,Target)
             if not VisiblePart then
                 return
             end
-            
+
             Part = VisiblePart
         end
-        
+
         if not AimbotManager.WallCheck then
             Part = Utils:GetCharacterInstance(Character,"HumanoidRootPart")
         end
-        
+
         if not Part then
             return OldIndex(Self,Property)
         end
-        
+
         if Property == "Hit" then
             return Part.CFrame
         elseif Property == "Target" then
             return Part
         end
-        
+
     end
-    
+
     return OldIndex(Self,Property)
 end
 
