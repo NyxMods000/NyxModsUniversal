@@ -925,7 +925,7 @@ function PowerfulManager.TpKill.Methods:TpKill()
             while true do
                 if TeleportA == true then
                     if MyRootPart and RootPart then
-                        MyRootPart.CFrame = CFrame.new(RootPart.CFrame.Position) * CFrame.new(0,5,0) * CFrame.Angles(math.rad(90),0,0)
+                        MyRootPart.CFrame = RootPart.CFrame * CFrame.new(0,0,5)
                     end
                 elseif TeleportA == false then
                     if MyRootPart then
