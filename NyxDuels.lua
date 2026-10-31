@@ -829,138 +829,6 @@ function HitboxManager.Methods:RequestUpdate()
     end)
 end
 
-local PowerfulManager = {
-    TpKill = {
-        InProgress = false,
-        TargetsCount = 1,
-
-        CurrentTarget = nil,
-
-        Methods = {},
-    }
-}
-
-function PowerfulManager.TpKill.Methods:GetTargets()
-    local Targets = {}
-
-    for i = 1, 999999 do
-        if #Targets >= PowerfulManager.TpKill.TargetsCount then
-            break
-        end
-
-        local Data = Cache.ClosestPlayers[i]
-
-        if not Data then
-            break
-        end
-
-        local Target = Data.Player
-
-        if not Target or Target == Client then
-            continue
-        end
-
-        if Utils:TeamCheck(Target) then
-            continue
-        end
-
-        if Utils:IsDead(Target) then
-            continue
-        end
-
-        table.insert(Targets, Target)
-    end
-
-    return Targets
-end
-
---!mv:omit
-function PowerfulManager.TpKill.Methods:TpKill()
-    if PowerfulManager.TpKill.InProgress then
-        return
-    end
-
-    Utils:GetClosestPlayers()
-    PowerfulManager.TpKill.InProgress = true
-
-    local Targets = self:GetTargets()
-    if #Targets == 0 then
-        PowerfulManager.TpKill.InProgress = false
-        return
-    end
-
-    for _,Target in ipairs(Targets) do
-
-        if not Target then
-            continue
-        end
-
-        if Utils:IsDead(Target) then
-            continue
-        end
-
-        PowerfulManager.TpKill.CurrentTarget = Target
-
-        local Character = Utils:Character(Target)
-        local MyCharacter = Utils:Character(Client)
-        if not Character or not MyCharacter then
-            continue
-        end
-
-        local RootPart = Utils:GetCharacterInstance(Character,"HumanoidRootPart")
-        local MyRootPart = Utils:GetCharacterInstance(MyCharacter,"HumanoidRootPart")
-        if not RootPart or not MyRootPart then
-            continue
-        end
-
-        local Gun = Utils:GetGun(Client)
-        if not Gun then
-            continue
-        end
-
-        local TeleportA = true
-        local OldCFrame = MyRootPart.CFrame
-
-        task.spawn(function()
-            while true do
-                if TeleportA == true then
-                    if MyRootPart and RootPart then
-                        MyRootPart.CFrame = RootPart.CFrame * CFrame.new(0,0,5)
-                    end
-                elseif TeleportA == false then
-                    if MyRootPart then
-                        MyRootPart.CFrame = OldCFrame
-                    end
-                elseif TeleportA == "Stop" then
-                    break
-                end
-                task.wait(0.01)
-            end
-        end)
-
-        for _,Script in ipairs(Gun:GetChildren()) do
-         if Script:IsA("LocalScript") then
-          Script.Enabled = false
-          task.wait(0.05)
-          Script.Enabled = true
-          task.wait(0.05)
-         end
-        end
-
-        task.wait(1)
-        Gun.Parent = MyCharacter
-        Gun:Activate()
-        task.wait(0.25)
-        TeleportA = false
-        task.wait(0.25)
-        TeleportA = "Stop"
-        task.wait(2.6)
-    end
-
-    PowerfulManager.TpKill.InProgress = false
-    PowerfulManager.TpKill.CurrentTarget = nil
-end
-
 --// Ui
 local Window = WindUI:CreateWindow({
     Title = "NyxDuels",
@@ -1145,34 +1013,7 @@ HitboxTab:Colorpicker({
     end
 })
 
-local PowerfulTab = Window:Tab({
-    Title = "Powerful",
-    Icon = "zap"
-})
-
-local PowerfulSection = PowerfulTab:Section({
-    Title = "High Impact",
-    Desc = "Features with significant gameplay impact.",
-})
-
-PowerfulTab:Button({
-    Title = "Tp Kill ClosestPlayers",
-    Callback = function()
-        PowerfulManager.TpKill.Methods:TpKill()
-    end,
-})
-
-PowerfulTab:Slider({
-    Title = "Max Targets",
-    Value = {
-        Min = 1,
-        Max = 4,
-        Default = 1,
-    },
-    Callback = function(Value)
-        PowerfulManager.TpKill.TargetsCount = Value
-    end
-})
+--// Orbs
 
 local OrbsFarmTab = Window:Tab({
     Title = "Orbs Farm",
@@ -1386,7 +1227,7 @@ end)
 
 --// Loops
 RunService.Heartbeat:Connect(function(DeltaTime)
-    local NeedUpdate = AimbotManager.State or AutoShootManager.State or PowerfulManager.TpKill.InProgress or false
+    local NeedUpdate = AimbotManager.State or AutoShootManager.State or false
     if NeedUpdate then
         Utils:GetClosestPlayers()
     end
@@ -1403,7 +1244,7 @@ setreadonly(MetaTable,false)
 
 local OldIndex = MetaTable.__index
 MetaTable.__index = function(Self,Property)
-    if not AimbotManager.State and not AutoShootManager.State and not PowerfulManager.TpKill.InProgress then
+    if not AimbotManager.State and not AutoShootManager.State then
         return OldIndex(Self,Property)
     end
 
@@ -1415,31 +1256,6 @@ MetaTable.__index = function(Self,Property)
 
     if Property ~= "Hit" and Property ~= "Target" then
         return OldIndex(Self,Property)
-    end
-
-    --// TpKill
-    if PowerfulManager.TpKill.InProgress then
-        local Target = PowerfulManager.TpKill.CurrentTarget
-        if not Target then
-            return OldIndex(Self,Property)
-        end
-
-        local Character = Utils:Character(Target)
-        if not Character then
-            return OldIndex(Self,Property)
-        end
-
-        local Part = Utils:GetCharacterInstance(Character,"HumanoidRootPart")
-
-        if not Part then
-            return OldIndex(Self,Property)
-        end
-
-        if Property == "Hit" then
-            return Part.CFrame
-        elseif Property == "Target" then
-            return Part
-        end
     end
 
     --// AutoShoot
